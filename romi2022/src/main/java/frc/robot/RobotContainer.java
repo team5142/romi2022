@@ -4,10 +4,14 @@
 
 package frc.robot;
 
+import java.util.function.DoubleSupplier;
+
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.subsystems.RomiDrivetrain;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.commands.ArcadeDrive;
+import frc.robot.commands.TNMS;
+import frc.robot.subsystems.Drivetrain;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -16,11 +20,14 @@ import edu.wpi.first.wpilibj2.command.Command;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+  private final Joystick jy = new Joystick(0);
+  private final DoubleSupplier xSupplier = () -> jy.getRawAxis(1);
+  private final DoubleSupplier ySupplier = () -> jy.getRawAxis(0);
+
   // The robot's subsystems and commands are defined here...
-  private final RomiDrivetrain m_romiDrivetrain = new RomiDrivetrain();
-
-  private final ExampleCommand m_autoCommand = new ExampleCommand(m_romiDrivetrain);
-
+  private final Drivetrain drivetrain = new Drivetrain();
+  private final ArcadeDrive Arc = new ArcadeDrive(drivetrain, xSupplier, ySupplier);
+  private final TNMS Auooou = new TNMS(drivetrain);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
@@ -33,7 +40,9 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {}
+  private void configureButtonBindings() {
+    drivetrain.setDefaultCommand(Arc);
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -42,6 +51,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return m_autoCommand;
+    return Auooou;
   }
 }
